@@ -241,9 +241,9 @@ void reportfun(GLFWwindow* window)
         std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 
         // report
-        mtx.lock(); // prevent simultaneous read/write when multithreading (do I need to lock BOTH the read and the write of this shared resource? or just the write? just to be safe, I'll do both... for now... until it seems likely that it's limiting performance, anyway.)
+        // mtx.lock(); // prevent simultaneous read/write when multithreading (do NOT block other threads for this one's sake. that will cause crashes)
         std::cout << "Current value is: \"" << gbuf << "\"" << std::endl;
-        mtx.unlock(); // resume normally scheduled programming
+        // mtx.unlock(); // resume normally scheduled programming
     }
 }
 
