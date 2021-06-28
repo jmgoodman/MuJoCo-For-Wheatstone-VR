@@ -20,10 +20,13 @@
 #include<chrono> // for sleep
 #include<thread> // for sleep
 #include<windows.h> // for opening wavefront
+#include<mutex> // to avoid simultaneous read-write problems
+
 
 // tcp defines
 #define SERVER "127.0.0.1"
 #define PORT 3030
+#define SAMPLEPERIOD 100
 
 /*
 // for debugging
@@ -59,6 +62,9 @@ double lasty = 0;
 WSADATA wsa;
 SOCKET s;
 struct sockaddr_in server;
+
+// threading
+std::mutex mtx;
 
 
 /*
@@ -592,6 +598,73 @@ int readdataframe(void)
 	}
 }
 
+// cleanup
+int tcpcleanup(void)
+{
+	closesocket(s);
+	puts("socket closed\n");
+	WSACleanup();
+	puts("winsock unloaded");
+	return 0;
+}
+
+
+// tcp client function for thread
+int clientfun(void)
+{
+	if(tcpinit()==1)
+	{
+		puts("init failed");
+		return 1;
+	}
+	
+	if(sendcommand("Version 1.0")==1)
+	{
+		puts("send Version 1.0 failed");
+		tcpcleanup();
+		return 1;
+	}
+	
+	if(readconfirm()==1)
+	{
+		puts("reading Version 1.0 confirmation failed");
+		tcpcleanup();
+		return 1;
+	}
+	
+	while(1)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(SAMPLEPERIOD));
+		
+		if(sendcommand("SendCurrentFrame")==1)
+		{
+			puts("send SendCurrentFrame failed");
+			tcpcleanup();
+			return 1;
+		}
+		
+		if(readconfirm()==1)
+		{
+			puts("reading SendCurrentFrame confirmation failed");
+			tcpcleanup();
+			return 1;
+		}
+		
+		mtx.lock(); // prevent reading while writing
+		if(readdataframe()==1)
+		{
+			puts("reading SendCurrentFrame dataframe failed");
+			tcpcleanup();
+			mtx.unlock();
+			return 1;
+		}
+		mtx.unlock();
+	}
+	
+	tcpcleanup();
+	return 0;
+}
+
 
 // main function
 int main(int argc, const char** argv)
@@ -646,6 +719,9 @@ int main(int argc, const char** argv)
 	
 	// stereo mode
     scn.stereo = mjSTEREO_SIDEBYSIDE;
+	
+	// run TCP thread
+	std::thread tcpthread(clientfun);
 
     // run main loop, target real-time simulation and 60 fps rendering
     while( !glfwWindowShouldClose(window) )
@@ -679,6 +755,9 @@ int main(int argc, const char** argv)
         // process pending GUI events, call GLFW callbacks
         glfwPollEvents();
     }
+	
+	// join threads
+    tcpthread.join();
 
     //free visualization storage
     mjv_freeScene(&scn);
