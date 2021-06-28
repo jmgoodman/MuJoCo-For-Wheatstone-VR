@@ -22,11 +22,17 @@
 #include<windows.h> // for opening wavefront
 #include<mutex> // to avoid simultaneous read-write problems
 
+#pragma comment(lib,"ws2_32.lib") //Winsock Library
 
 // tcp defines
 #define SERVER "127.0.0.1"
 #define PORT 3030
-#define SAMPLEPERIOD 100
+#define SAMPLEPERIOD 8
+
+// it works! it tracks!
+// todo:
+// remove debugging text output
+// find opengl-native way to flip rendering - obs is tooooo slow!!! (at least on my work machine - i should test on my home machine to see if it's a problem there, and if not, request an upgrade)
 
 /*
 // for debugging
@@ -299,11 +305,12 @@ int sendcommand(const char *thismsg)
 }
 
 // read confirmation
-int readconfirm(void);
+int readconfirm(void)
 {
 	//Receive a reply from the server
 	//start with the size parameter
 	char size_reply[4];
+	int recv_size;
 	if((recv_size=recv(s , size_reply , 4 , 0)) == SOCKET_ERROR)
 	{
 		puts("recv failed");
@@ -364,6 +371,7 @@ int readdataframe(void)
 	// now read in the dataframe
 	//start with the size parameter
 	char size_reply[4];
+	int recv_size;
 	if((recv_size=recv(s , size_reply , 4 , 0)) == SOCKET_ERROR)
 	{
 		puts("recv failed");
@@ -588,9 +596,10 @@ int readdataframe(void)
 		{
 			mjtNum pospert [3] = {X,Y,Z}; // hopefully this converts floats to doubles without a hitch...
 			mjtNum quatpert [4] = {Q0,Qx,Qy,Qz}; // should be normalized when it comes outta wavefront...
+			mjtNum scalefactor = 0.001;
 			
-			mju_copy3(pert.refpos,pospert); // refquat can also be used to adjust orientation - real x y z order
-			mju_copy4(pert.refquat,quatpert);
+			mju_scl3(pert.refpos,pospert,scalefactor); // was copy3, but i realized that I need to convert from mm to m.
+			mju_copy4(pert.refquat,quatpert); // refquat can also be used to adjust orientation - real x y z order
 		}
 		
 		byteind = byteind + 32;
@@ -610,7 +619,7 @@ int tcpcleanup(void)
 
 
 // tcp client function for thread
-int clientfun(void)
+int clientfun(GLFWwindow* window)
 {
 	if(tcpinit()==1)
 	{
@@ -632,7 +641,7 @@ int clientfun(void)
 		return 1;
 	}
 	
-	while(1)
+	while(!glfwWindowShouldClose(window))
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(SAMPLEPERIOD));
 		
@@ -721,7 +730,7 @@ int main(int argc, const char** argv)
     scn.stereo = mjSTEREO_SIDEBYSIDE;
 	
 	// run TCP thread
-	std::thread tcpthread(clientfun);
+	std::thread tcpthread(clientfun,window);
 
     // run main loop, target real-time simulation and 60 fps rendering
     while( !glfwWindowShouldClose(window) )
