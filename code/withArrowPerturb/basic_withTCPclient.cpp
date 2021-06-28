@@ -580,8 +580,11 @@ int readdataframe(void)
 		// if tool = 1, set perturbation
 		if(tooliter==0)
 		{
-			const mjtNum pospert [3] = {X,Y,Z}; // hopefully this converts floats to doubles without a hitch...
-			const mjtNum quatpert [4] = {Q0,Qx,Qy,Qz};
+			mjtNum pospert [3] = {X,Y,Z}; // hopefully this converts floats to doubles without a hitch...
+			mjtNum quatpert [4] = {Q0,Qx,Qy,Qz}; // should be normalized when it comes outta wavefront...
+			
+			mju_copy3(pert.refpos,pospert); // refquat can also be used to adjust orientation - real x y z order
+			mju_copy4(pert.refquat,quatpert);
 		}
 		
 		byteind = byteind + 32;
