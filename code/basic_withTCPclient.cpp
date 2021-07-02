@@ -591,7 +591,7 @@ int readdataframe(void)
 		memcpy(&rms,rms_,sizeof(rms));
 		std::cout << "Tool " << tooliter+1 << " RMS marker fit to rigid body error: " << rms << std::endl;	
 
-		// if tool = 1, set perturbation
+		// if tool = 1, set perturbation. also, check the data for NaN values
 		if(tooliter==0)
 		{
 			mjtNum pospert [3] = {X,Y,Z}; // hopefully this converts floats to doubles without a hitch...
