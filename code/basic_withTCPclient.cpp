@@ -594,8 +594,8 @@ int readdataframe(void)
 		// if tool = 1, set perturbation. also, check the data for NaN values so that you can maintain previous position instead of flickering when you get a bad frame (eventually - TODO!!!)
 		if(tooliter==0)
 		{
-			mjtNum pospert [3] = {-X,-Y,-Z}; // hopefully this converts floats to doubles without a hitch... also, be sure to flip all your axes. X axis is proper but needs to be mirrored, and the sign has opposite convention in the wave system along the y and z axes.
-			mjtNum quatpert [4] = {Q0,Qx,Qy,Qz}; // should be normalized when it comes outta wavefront... also, because of where the base point on the pill is, the quaternion as-is is actually perfect... yaw is properly flipped, pitch is along the perfect axis too. It's strange, since you had to flip the cartesian coordinates, but yeah, the quaternions work perfectly without any modification.
+			mjtNum pospert [3] = {-Y,X,-Z}; // hopefully this converts floats to doubles without a hitch... also, axes are rearranged to transfer from wavefront to mujoco conventions (and also to "flip" the world for 3D presentation)
+			mjtNum quatpert [4] = {Q0,Qy,-Qx,Qz}; // should be normalized when it comes outta wavefront... this also needed to go through a change to be appropriate for VR.
 			
 			// this all works with the wand, btw. when it comes to the hand with all 8 markers, it chugs like you wouldn't believe, and eventually, WaveFront fucking crashes. Need to solve this problem! (probably by splitting wavefront and mujoco onto different machines...)			
 			mjtNum scalefactor = 0.001; // convert mm (Wave) to m (MuJoCo)
