@@ -591,13 +591,14 @@ int readdataframe(void)
 		memcpy(&rms,rms_,sizeof(rms));
 		std::cout << "Tool " << tooliter+1 << " RMS marker fit to rigid body error: " << rms << std::endl;	
 
-		// if tool = 1, set perturbation. also, check the data for NaN values (eventually)
+		// if tool = 1, set perturbation. also, check the data for NaN values so that you can maintain previous position instead of flickering when you get a bad frame (eventually - TODO!!!)
 		if(tooliter==0)
 		{
 			mjtNum pospert [3] = {-X,-Y,-Z}; // hopefully this converts floats to doubles without a hitch... also, be sure to flip all your axes. X axis is proper but needs to be mirrored, and the sign has opposite convention in the wave system along the y and z axes.
-			mjtNum quatpert [4] = {Q0,-Qx,-Qy,-Qz}; // should be normalized when it comes outta wavefront... also, flip the y and z components just as you do with the Euclidean ones.
-		
-			mjtNum scalefactor = 0.001;
+			mjtNum quatpert [4] = {Q0,Qx,Qy,Qz}; // should be normalized when it comes outta wavefront... also, because of where the base point on the pill is, the quaternion as-is is actually perfect... yaw is properly flipped, pitch is along the perfect axis too. It's strange, since you had to flip the cartesian coordinates, but yeah, the quaternions work perfectly without any modification.
+			
+			// this all works with the wand, btw. when it comes to the hand with all 8 markers, it chugs like you wouldn't believe, and eventually, WaveFront fucking crashes. Need to solve this problem! (probably by splitting wavefront and mujoco onto different machines...)			
+			mjtNum scalefactor = 0.001; // convert mm (Wave) to m (MuJoCo)
 			
 			mju_scl3(pert.refpos,pospert,scalefactor); // was copy3, but i realized that I need to convert from mm to m.
 			mju_copy4(pert.refquat,quatpert); // refquat can also be used to adjust orientation - real x y z order
