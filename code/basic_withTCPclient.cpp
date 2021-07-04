@@ -27,7 +27,7 @@
 // tcp defines
 #define SERVER "127.0.0.1"
 #define PORT 3030
-#define SAMPLEPERIOD 8
+#define SAMPLEPERIOD 16
 
 // it works! it tracks!
 // todo:
@@ -591,11 +591,12 @@ int readdataframe(void)
 		memcpy(&rms,rms_,sizeof(rms));
 		std::cout << "Tool " << tooliter+1 << " RMS marker fit to rigid body error: " << rms << std::endl;	
 
-		// if tool = 1, set perturbation. also, check the data for NaN values
+		// if tool = 1, set perturbation. also, check the data for NaN values (eventually)
 		if(tooliter==0)
 		{
-			mjtNum pospert [3] = {X,Y,Z}; // hopefully this converts floats to doubles without a hitch...
-			mjtNum quatpert [4] = {Q0,Qx,Qy,Qz}; // should be normalized when it comes outta wavefront...
+			mjtNum pospert [3] = {-X,-Y,-Z}; // hopefully this converts floats to doubles without a hitch... also, be sure to flip all your axes. X axis is proper but needs to be mirrored, and the sign has opposite convention in the wave system along the y and z axes.
+			mjtNum quatpert [4] = {Q0,-Qx,-Qy,-Qz}; // should be normalized when it comes outta wavefront... also, flip the y and z components just as you do with the Euclidean ones.
+		
 			mjtNum scalefactor = 0.001;
 			
 			mju_scl3(pert.refpos,pospert,scalefactor); // was copy3, but i realized that I need to convert from mm to m.
@@ -641,9 +642,29 @@ int clientfun(GLFWwindow* window)
 		return 1;
 	}
 	
+	// didn't work, pill didn't move :(
+	/*
+	if(sendcommand("StreamFrames AllFrames")==1)
+	{
+		puts("send StreamFrames AllFrames failed");
+		tcpcleanup();
+		return 1;
+	}
+	
+	if(readconfirm()==1)
+	{
+		puts("reading StreamFrames AllFrames confirmation failed");
+		tcpcleanup();
+		return 1;
+	}
+	*/
+	
 	while(!glfwWindowShouldClose(window))
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(SAMPLEPERIOD));
+		// std::this_thread::sleep_for(std::chrono::milliseconds(SAMPLEPERIOD));
+		
+		// this is probably mega inefficient. simply call "streamframes" once.
+		// uh oh, problem: "StreamFrames AllFrames" doesn't result in movement! oh no! I have to assume the problem is that the format is juuuuust slightly different, which in turn fucks up my parsing. UGHHHHH
 		
 		if(sendcommand("SendCurrentFrame")==1)
 		{
@@ -659,6 +680,7 @@ int clientfun(GLFWwindow* window)
 			return 1;
 		}
 		
+		
 		mtx.lock(); // prevent reading while writing
 		if(readdataframe()==1)
 		{
@@ -669,6 +691,13 @@ int clientfun(GLFWwindow* window)
 		}
 		mtx.unlock();
 	}
+	
+	
+	// only use with StreamFrames AllFrames
+	/*
+	sendcommand("StreamFrames Stop");
+	readconfirm();
+	*/
 	
 	tcpcleanup();
 	return 0;
