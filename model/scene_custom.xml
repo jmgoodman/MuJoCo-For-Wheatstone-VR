@@ -46,10 +46,8 @@
 
         <geom name="ground" type="plane" size="0 0 1" pos="0 0 0" quat="1 0 0 0" material="matplane" condim="1"/>
 		
-		<camera name="fixedcam" mode="fixed" ipd="-0.068" pos="0 -0.1 0.1" quat="1 0 0 0">
-
         <body mocap="true" pos="0 0 0" zaxis="0 0 1">
-            <geom type="capsule" size=".01 .01" material="centerpill" group="1" condim="1"/>
+            <geom type="capsule" size=".005 .005" material="centerpill" group="1" condim="1"/>
         </body>
 		<body mocap="true" pos="0 0.5 0" zaxis="0 0 1">
             <geom type="capsule" size=".01 .01" material="outpill" group="1" condim="1"/>

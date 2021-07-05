@@ -56,6 +56,7 @@ const mjtNum VERTPERT [3] = {0,0.167,0};
 const mjtNum HORZPERT [3] = {0.167,0,0};
 const mjtNum OUTPERT  [3] = {0,0,0.167}; 
 const mjtNum ZEROPERT [3] = {0,0,0};
+mjtNum ZEROLOC [3] = {0,0,0};
 
 // mouse interaction
 bool button_left = false;
@@ -94,6 +95,15 @@ void keyboard(GLFWwindow* window, int key, int scancode, int act, int mods)
 		mju_copy3(pert.refpos,ZEROPERT); // refquat can also be used to adjust orientation - real x y z order
 		/*
 		cout << "bksp" << endl;
+		*/
+    }
+	
+	// keyboard buttons: apply perturbations (only suitable when a single_body model, e.g. scene.xml, is loaded)
+	if( act==GLFW_PRESS && key==GLFW_KEY_SPACE )
+    {
+		mju_copy3(cam.lookat,ZEROLOC);
+		/*
+		cout << "up" << endl;
 		*/
     }
 	
@@ -602,6 +612,9 @@ int readdataframe(void)
 			
 			mju_scl3(pert.refpos,pospert,scalefactor); // was copy3, but i realized that I need to convert from mm to m.
 			mju_copy4(pert.refquat,quatpert); // refquat can also be used to adjust orientation - real x y z order
+			
+			// also use the perturbation location to define your zero location
+			mju_copy3(ZEROLOC,pert.refpos);
 		}
 		
 		byteind = byteind + 32;
@@ -742,6 +755,18 @@ int main(int argc, const char** argv)
 
     // initialize visualization data structures
     mjv_defaultCamera(&cam);
+	
+	// set REAL camera defaults
+    cam.lookat[0] = 0;
+    cam.lookat[1] = 0;
+    cam.lookat[2] = 0;
+    cam.distance  = 0.2; // if this points at the object, then it should be a 15 (height), 20(out), 25 (hyp) triangle of distance
+	cam.azimuth   = 90; // deg
+	cam.elevation = 0; // deg, 37 for a nice 3-4-5 triangle
+
+    // set to fixed camera
+    // cam.type = mjCAMERA_FIXED;
+	
     mjv_defaultOption(&opt);
     mjv_defaultScene(&scn);
     mjr_defaultContext(&con);
