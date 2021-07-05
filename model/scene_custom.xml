@@ -45,27 +45,29 @@
         <light directional="true" diffuse=".6 .6 .6" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1"/>
 
         <geom name="ground" type="plane" size="0 0 1" pos="0 0 0" quat="1 0 0 0" material="matplane" condim="1"/>
+		
+		<camera name="fixedcam" mode="fixed" ipd="-0.068" pos="0 -0.1 0.1" quat="1 0 0 0">
 
         <body mocap="true" pos="0 0 0" zaxis="0 0 1">
-            <geom type="capsule" size=".1 .1" material="centerpill" group="1" condim="1"/>
+            <geom type="capsule" size=".01 .01" material="centerpill" group="1" condim="1"/>
         </body>
-		<body mocap="true" pos="0 1 0" zaxis="0 0 1">
-            <geom type="capsule" size=".1 .1" material="outpill" group="1" condim="1"/>
+		<body mocap="true" pos="0 0.5 0" zaxis="0 0 1">
+            <geom type="capsule" size=".01 .01" material="outpill" group="1" condim="1"/>
         </body>
-		<body mocap="true" pos="0 -1 0" zaxis="0 0 1">
-            <geom type="capsule" size=".1 .1" material="inpill" group="1" condim="1"/>
+		<body mocap="true" pos="0 -0.5 0" zaxis="0 0 1">
+            <geom type="capsule" size=".01 .01" material="inpill" group="1" condim="1"/>
         </body>
-		<body mocap="true" pos="-1 0 0" zaxis="0 0 1">
-            <geom type="capsule" size=".1 .1" material="leftpill" group="1" condim="1"/>
+		<body mocap="true" pos="-0.5 0 0" zaxis="0 0 1">
+            <geom type="capsule" size=".01 .01" material="leftpill" group="1" condim="1"/>
         </body>
-		<body mocap="true" pos="1 0 0" zaxis="0 0 1">
-            <geom type="capsule" size=".1 .1" material="rightpill" group="1" condim="1"/>
+		<body mocap="true" pos="0.5 0 0" zaxis="0 0 1">
+            <geom type="capsule" size=".01 .01" material="rightpill" group="1" condim="1"/>
         </body>
-		<body mocap="true" pos="0 0 -1" zaxis="0 0 1">
-            <geom type="capsule" size=".1 .1" material="downpill" group="1" condim="1"/>
+		<body mocap="true" pos="0 0 -0.5" zaxis="0 0 1">
+            <geom type="capsule" size=".01 .01" material="downpill" group="1" condim="1"/>
         </body>
-		<body mocap="true" pos="0 0 1" zaxis="0 0 1">
-            <geom type="capsule" size=".1 .1" material="uppill" group="1" condim="1"/>
+		<body mocap="true" pos="0 0 0.5" zaxis="0 0 1">
+            <geom type="capsule" size=".01 .01" material="uppill" group="1" condim="1"/>
         </body>
     </worldbody>
 </mujoco>
