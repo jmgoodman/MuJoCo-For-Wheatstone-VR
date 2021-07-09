@@ -70,8 +70,8 @@ WSADATA wsa;
 SOCKET s;
 struct sockaddr_in server;
 
-// threading
-std::mutex mtx;
+// thread locking (or not, it's probably just a source of bugs tbf)
+// std::mutex mtx;
 
 
 /*
@@ -695,15 +695,15 @@ int clientfun(GLFWwindow* window)
 		}
 		
 		
-		mtx.lock(); // prevent reading while writing
+		// mtx.lock(); // prevent reading while writing (OR NOT, I THINK THIS IS THE SOURCE OF YOUR SLOWDOWN AND YOUR BUGS!!!)
 		if(readdataframe()==1)
 		{
 			puts("reading SendCurrentFrame dataframe failed");
 			tcpcleanup();
-			mtx.unlock();
+			// mtx.unlock();
 			return 1;
 		}
-		mtx.unlock();
+		// mtx.unlock();
 	}
 	
 	
