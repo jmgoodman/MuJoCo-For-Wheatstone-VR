@@ -14,13 +14,18 @@
 #include "stdlib.h"
 #include "string.h"
 
+/*
+// math includes
+#include <math.h>       // atan2
+*/
+
 // tcp includes
 #include<winsock2.h> // for sockets
 #include<iostream> // for printing
 #include<chrono> // for sleep
 #include<thread> // for sleep
 #include<windows.h> // for opening wavefront
-#include<mutex> // to avoid simultaneous read-write problems
+// #include<mutex> // to avoid simultaneous read-write problems
 
 #pragma comment(lib,"ws2_32.lib") //Winsock Library
 
@@ -98,14 +103,32 @@ void keyboard(GLFWwindow* window, int key, int scancode, int act, int mods)
 		*/
     }
 	
-	// keyboard buttons: apply perturbations (only suitable when a single_body model, e.g. scene.xml, is loaded)
+	// keyboard buttons: space sets the lookat point
+	// (at least this one functions normally...)
 	if( act==GLFW_PRESS && key==GLFW_KEY_SPACE )
     {
 		mju_copy3(cam.lookat,ZEROLOC);
-		/*
-		cout << "up" << endl;
-		*/
     }
+	
+	// keyboard buttons: enter sets the camera position w.r.t. the lookat point
+	// although calibrating to eye location is probably not possible, as monkey face is outside the tracking region
+	// might be better to calibrate handrest location and hard-code the monkey eye position w.r.t. those two objects (which we can do with head fixation!!!)
+	/*
+	if( act==GLFW_PRESS && key==GLFW_KEY_ENTER )
+    {
+		// okay something screwy is going on here. multiple presses of enter, even from the same point, result in wildly different cameras...
+		// so, for now, I'm disabling this. at least until I can figure out what the hell is going on here.
+		mjtNum dx [3] = {0,0,0};
+		mju_sub3(dx,ZEROLOC,cam.lookat);
+		mjtNum dist = mju_dist3(ZEROLOC,cam.lookat); // dist parameter gotten here
+		mjtNum azi  = mju_atan2(-dx[1],-dx[0]); // azimuth parameter
+		mjtNum elv  = mju_asin(-dx[2] / dist); // elevation parameter
+		cam.distance  = dist;
+		cam.azimuth   = azi * 180/mjPI; // needs degrees!
+		cam.elevation = elv * 180/mjPI;
+		mju_copy3(cam.lookat,ZEROLOC);
+    }
+	*/
 	
 	// keyboard buttons: apply perturbations (only suitable when a single_body model, e.g. scene.xml, is loaded)
 	if( act==GLFW_PRESS && key==GLFW_KEY_UP )
@@ -280,7 +303,7 @@ int sendcommand(const char *thismsg)
 	lenbytes[3]  = (msglen+8) & (int)(0xFF);
 	typebytes[3] = 1; // commands are always just 1, no need to do long calculations
 
-	std::cout << "len: " << (msglen+8) << std::endl;
+	// std::cout << "len: " << (msglen+8) << std::endl;
 	
 	// build your message
 	char * message = new char [msglen+8]; //make the message length EXACTLY as long as it needs to be. don't try to buffer it, that'll lead to out-of-bounds error messages in the Wavefront console (and may have contributed to the lack of streamed data???)
@@ -310,7 +333,7 @@ int sendcommand(const char *thismsg)
 		puts("Send failed");
 		return 1;
 	}
-	puts("Data Send\n");
+	// puts("Data Send\n"); // needlessly clutters your output stream
 	return 0;
 }
 
@@ -337,7 +360,7 @@ int readconfirm(void)
 	
 	size_reply_int = size_reply_int - 8;
 	
-	std::cout << "size = \"" << size_reply_int << "\"" << std::endl << std::endl;
+	// std::cout << "size = \"" << size_reply_int << "\"" << std::endl << std::endl;
 	
 	// next get the type parameter
 	char type_reply[4];
@@ -355,7 +378,7 @@ int readconfirm(void)
 		type_reply_int += (int)type_reply[i];
 	}
 	
-	std::cout << "type = \"" << type_reply_int << "\"" << std::endl << std::endl;
+	// std::cout << "type = \"" << type_reply_int << "\"" << std::endl << std::endl;
 	
 	// next get the message per se
 	char *mssg_reply;
@@ -371,7 +394,7 @@ int readconfirm(void)
 	memset(mssg_toprint,'\0',size_reply_int+1);
 	memcpy(mssg_toprint,mssg_reply,size_reply_int);
 
-	std::cout << "message = \"" << mssg_toprint << "\"" << std::endl << std::endl;
+	// std::cout << "message = \"" << mssg_toprint << "\"" << std::endl << std::endl;
 	return 0;
 }
 
@@ -397,7 +420,7 @@ int readdataframe(void)
 	}
 	
 	size_reply_int = size_reply_int - 8;
-	std::cout << "size dataframe = \"" << size_reply_int << "\"" << std::endl << std::endl;
+	// std::cout << "size dataframe = \"" << size_reply_int << "\"" << std::endl << std::endl;
 	
 	// next get the type parameter
 	char type_reply[4];
@@ -415,7 +438,7 @@ int readdataframe(void)
 		type_reply_int += (int)type_reply[i];
 	}
 	
-	std::cout << "type dataframe= \"" << type_reply_int << "\"" << std::endl << std::endl;
+	// std::cout << "type dataframe= \"" << type_reply_int << "\"" << std::endl << std::endl;
 	
 	// next get the message per se
 	char *mssg_reply;
@@ -426,7 +449,7 @@ int readdataframe(void)
 		return 1;
 	}
 	
-	std::cout << "message dataframe:" << std::endl;
+	// std::cout << "message dataframe:" << std::endl;
 	
 	// read out the message bytes
 	int ii = 0;
@@ -435,15 +458,17 @@ int readdataframe(void)
 	{
 		// std::cout << ii << "|" << (unsigned int)mssg_reply[ii] << " ";
 		// std::cout << std::hex << (unsigned int)mssg_reply[ii];
-		printf("%.2X",(unsigned char)mssg_reply[ii]);
+		
+		// uncomment the line below to get the raw bytestring output
+		// printf("%.2X",(unsigned char)mssg_reply[ii]);
 		if ( ii % 2 == 1 )
 		{
-			std::cout << " ";
+			// std::cout << " ";
 		}
 		ii++;
 	}
 	
-	std::cout << std::endl;
+	// std::cout << std::endl;
 	
 	// parse the fields
 	
@@ -455,7 +480,7 @@ int readdataframe(void)
 		component_count += (unsigned int)mssg_reply[i];
 	}
 	
-	std::cout << "Component Count: " << component_count << std::endl;
+	// std::cout << "Component Count: " << component_count << std::endl;
 	
 	// componentsize
 	unsigned int componentsize = 0;
@@ -465,7 +490,7 @@ int readdataframe(void)
 		componentsize += (unsigned int)mssg_reply[i+4];
 	}
 	
-	std::cout << "Component Size: " << componentsize << std::endl;
+	// std::cout << "Component Size: " << componentsize << std::endl;
 
 	// componenttype
 	unsigned int componenttype = 0;
@@ -475,7 +500,7 @@ int readdataframe(void)
 		componenttype += (unsigned int)mssg_reply[i+8];
 	}
 	
-	std::cout << "Component Type: " << componenttype << std::endl;
+	// std::cout << "Component Type: " << componenttype << std::endl;
 
 	// framenumber
 	unsigned int framenumber = 0;
@@ -485,7 +510,7 @@ int readdataframe(void)
 		framenumber += (unsigned int)mssg_reply[i+12];
 	}
 	
-	std::cout << "Frame Number: " << framenumber << std::endl;
+	// std::cout << "Frame Number: " << framenumber << std::endl;
 
 	// timestamp
 	unsigned long long timestamp = 0;
@@ -495,7 +520,7 @@ int readdataframe(void)
 		timestamp += (unsigned long long)mssg_reply[i+16];
 	}
 	
-	std::cout << "Timestamp (ms): " << timestamp << std::endl;
+	// std::cout << "Timestamp (ms): " << timestamp << std::endl;
 	
 	// toolcount
 	unsigned int toolcount = 0;
@@ -505,7 +530,7 @@ int readdataframe(void)
 		toolcount += (unsigned int)mssg_reply[i+24];
 	}
 	
-	std::cout << "Tool Count: " << toolcount << std::endl;
+	// std::cout << "Tool Count: " << toolcount << std::endl;
 	
 
 	unsigned int tooliter = 0;
@@ -522,7 +547,7 @@ int readdataframe(void)
 		}
 		
 		memcpy(&Q0,Q0_,sizeof(Q0)); // don't need to pointerize Q0_ because, as an array, it is already a pointer
-		std::cout << "Tool " << tooliter+1 << " Q0: " << Q0 << std::endl;
+		// std::cout << "Tool " << tooliter+1 << " Q0: " << Q0 << std::endl;
 		
 		// Qx
 		float Qx;
@@ -533,7 +558,7 @@ int readdataframe(void)
 		}
 		
 		memcpy(&Qx,Qx_,sizeof(Qx));
-		std::cout << "Tool " << tooliter+1 << " Qx: " << Qx << std::endl;
+		// std::cout << "Tool " << tooliter+1 << " Qx: " << Qx << std::endl;
 					
 		// Qy
 		float Qy;
@@ -544,7 +569,7 @@ int readdataframe(void)
 		}
 		
 		memcpy(&Qy,Qy_,sizeof(Qy));
-		std::cout << "Tool " << tooliter+1 << " Qy: " << Qy << std::endl;
+		// std::cout << "Tool " << tooliter+1 << " Qy: " << Qy << std::endl;
 
 		// Qz
 		float Qz;
@@ -555,7 +580,7 @@ int readdataframe(void)
 		}
 		
 		memcpy(&Qz,Qz_,sizeof(Qz));
-		std::cout << "Tool " << tooliter+1 << " Qz: " << Qz << std::endl;
+		// std::cout << "Tool " << tooliter+1 << " Qz: " << Qz << std::endl;
 
 		// X
 		float X;
@@ -566,7 +591,7 @@ int readdataframe(void)
 		}
 		
 		memcpy(&X,X_,sizeof(X));
-		std::cout << "Tool " << tooliter+1 << " X: " << X << std::endl;
+		// std::cout << "Tool " << tooliter+1 << " X: " << X << std::endl;
 
 		// Y
 		float Y;
@@ -577,7 +602,7 @@ int readdataframe(void)
 		}
 		
 		memcpy(&Y,Y_,sizeof(Y));
-		std::cout << "Tool " << tooliter+1 << " Y: " << Y << std::endl;
+		// std::cout << "Tool " << tooliter+1 << " Y: " << Y << std::endl;
 
 		// Z
 		float Z;
@@ -588,7 +613,7 @@ int readdataframe(void)
 		}
 		
 		memcpy(&Z,Z_,sizeof(Z));
-		std::cout << "Tool " << tooliter+1 << " Z: " << Z << std::endl;
+		// std::cout << "Tool " << tooliter+1 << " Z: " << Z << std::endl;r
 		
 		// RMS
 		float rms; // PROBABLY a float, the user guide doesn't actually specify, but RMS values ought to be floats... right??? unless this is a flag for EXCESSIVE error... in which case this will either give a perfect 0 OR a very very tiny float value as its output.
@@ -599,22 +624,40 @@ int readdataframe(void)
 		}
 		
 		memcpy(&rms,rms_,sizeof(rms));
-		std::cout << "Tool " << tooliter+1 << " RMS marker fit to rigid body error: " << rms << std::endl;	
+		
+		// only print if rms is not zero
+		if ( rms > 0 )
+		{
+			std::cout << "Tool " << tooliter+1 << " RMS marker fit to rigid body error: " << rms << std::endl;
+		}
+		
 
 		// if tool = 1, set perturbation. also, check the data for NaN values so that you can maintain previous position instead of flickering when you get a bad frame (eventually - TODO!!!)
 		if(tooliter==0)
 		{
-			mjtNum pospert [3] = {-Y,X,-Z}; // hopefully this converts floats to doubles without a hitch... also, axes are rearranged to transfer from wavefront to mujoco conventions (and also to "flip" the world for 3D presentation)
-			mjtNum quatpert [4] = {Q0,Qy,-Qx,Qz}; // should be normalized when it comes outta wavefront... this also needed to go through a change to be appropriate for VR.
+			// provided none of these values are outside of +/- 500
 			
-			// this all works with the wand, btw. when it comes to the hand with all 8 markers, it chugs like you wouldn't believe, and eventually, WaveFront fucking crashes. Need to solve this problem! (probably by splitting wavefront and mujoco onto different machines...)			
-			mjtNum scalefactor = 0.001; // convert mm (Wave) to m (MuJoCo)
-			
-			mju_scl3(pert.refpos,pospert,scalefactor); // was copy3, but i realized that I need to convert from mm to m.
-			mju_copy4(pert.refquat,quatpert); // refquat can also be used to adjust orientation - real x y z order
-			
-			// also use the perturbation location to define your zero location
-			mju_copy3(ZEROLOC,pert.refpos);
+			if ( (X > -500) && (X < 500) && (Y > -500) && (Y < 500) && (Z > -500) && (Z < 500) ) // only update if the numbers make sense. otherwise, just keep the previous state
+			{
+				mjtNum pospert [3] = {-Y,X,-Z}; // hopefully this converts floats to doubles without a hitch... also, axes are rearranged to transfer from wavefront to mujoco conventions (and also to "flip" the world for 3D presentation)
+				mjtNum quatpert [4] = {Q0,Qy,-Qx,Qz}; // should be normalized when it comes outta wavefront... this also needed to go through a change to be appropriate for VR.
+				
+				// debug output
+				/*
+				system("CLS");
+				std::cout << -Y << " " << X << " " << -Z << " " << Q0 << " " << Qx << " " << Qy << " " << Qz << " " << std::endl;
+				*/
+				
+				// this all works with the wand, btw. when it comes to the hand with all 8 markers, it chugs like you wouldn't believe, and eventually, WaveFront fucking crashes. Need to solve this problem! (probably by splitting wavefront and mujoco onto different machines...)			
+				mjtNum scalefactor = 0.001; // convert mm (Wave) to m (MuJoCo)
+				
+				mju_scl3(pert.refpos,pospert,scalefactor); // was copy3, but i realized that I need to convert from mm to m.
+				mju_copy4(pert.refquat,quatpert); // refquat can also be used to adjust orientation - real x y z order
+				
+				// also use the perturbation location to define your zero location
+				mju_copy3(ZEROLOC,pert.refpos);
+			}
+
 		}
 		
 		byteind = byteind + 32;
@@ -717,7 +760,6 @@ int clientfun(GLFWwindow* window)
 	return 0;
 }
 
-
 // main function
 int main(int argc, const char** argv)
 {
@@ -762,7 +804,7 @@ int main(int argc, const char** argv)
     cam.lookat[2] = 0;
     cam.distance  = 0.2; // if this points at the object, then it should be a 15 (height), 20(out), 25 (hyp) triangle of distance
 	cam.azimuth   = 90; // deg
-	cam.elevation = 0; // deg, 37 for a nice 3-4-5 triangle
+	cam.elevation = 37; // deg, 37 for a nice 3-4-5 triangle
 
     // set to fixed camera
     // cam.type = mjCAMERA_FIXED;
@@ -770,6 +812,11 @@ int main(int argc, const char** argv)
     mjv_defaultOption(&opt);
     mjv_defaultScene(&scn);
     mjr_defaultContext(&con);
+	
+	// edit opt so perturbations cannot be seen with red arrows and whatnot
+	
+	opt.flags[mjVIS_PERTFORCE] = false;
+	opt.flags[mjVIS_PERTOBJ] = false;
 
     // create scene and context
     mjv_makeScene(m, &scn, 2000);
