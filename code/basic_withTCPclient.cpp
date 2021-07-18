@@ -633,7 +633,7 @@ int readdataframe(void)
 		
 
 		// if tool = 1, set perturbation. also, check the data for NaN values so that you can maintain previous position instead of flickering when you get a bad frame (eventually - TODO!!!)
-		if(tooliter==0)
+		if(tooliter<7)
 		{
 			// provided none of these values are outside of +/- 500
 			
@@ -648,7 +648,7 @@ int readdataframe(void)
 				std::cout << -Y << " " << X << " " << -Z << " " << Q0 << " " << Qx << " " << Qy << " " << Qz << " " << std::endl;
 				*/
 				
-				// this all works with the wand, btw. when it comes to the hand with all 8 markers, it chugs like you wouldn't believe, and eventually, WaveFront fucking crashes. Need to solve this problem! (probably by splitting wavefront and mujoco onto different machines...)			
+				// this all works with the wand, btw. when it comes to the hand with all 8 markers, it chugs like you wouldn't believe, and eventually, WaveFront fucking crashes. Need to solve this problem! (probably by splitting wavefront and mujoco onto different machines...) (ähm, okay, when I tried it again, it didn't cause problems anymore...)
 				mjtNum scalefactor = 0.001; // convert mm (Wave) to m (MuJoCo)
 				
 				mju_scl3(pert.refpos,pospert,scalefactor); // was copy3, but i realized that I need to convert from mm to m.
@@ -656,6 +656,12 @@ int readdataframe(void)
 				
 				// also use the perturbation location to define your zero location
 				mju_copy3(ZEROLOC,pert.refpos);
+				
+				// apply perturbation to the appropriate body
+				pert.active = 1; // 1=translation, 2=rotation
+				pert.select = tooliter+1;
+				pert.skinselect = -1;
+				mjv_applyPerturbPose(m, d, &pert, 0);  // move mocap bodies only
 			}
 
 		}
@@ -849,12 +855,15 @@ int main(int argc, const char** argv)
         mjrRect viewport = {0, 0, 0, 0};
         glfwGetFramebufferSize(window, &viewport.width, &viewport.height);
 		
+		// do this within the data reading loop 
+		/*
 		// apply perturbations, then update model
 		// reset perturbation state
 		pert.active = 1; // 1=translation, 2=rotation
 		pert.select = 1;
 		pert.skinselect = -1;
 		mjv_applyPerturbPose(m, d, &pert, 0);  // move mocap bodies only
+		*/
 
         // update scene and render
         mjv_updateScene(m, d, &opt, &pert, &cam, mjCAT_ALL, &scn);
