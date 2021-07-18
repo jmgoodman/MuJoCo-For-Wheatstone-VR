@@ -50,22 +50,22 @@
             <geom type="capsule" size=".005 .005" material="centerpill" group="1" condim="1"/>
         </body>
 		<body mocap="true" pos="0 0.5 0" zaxis="0 0 1">
-            <geom type="capsule" size=".01 .01" material="outpill" group="1" condim="1"/>
+            <geom type="capsule" size=".005 .005" material="outpill" group="1" condim="1"/>
         </body>
 		<body mocap="true" pos="0 -0.5 0" zaxis="0 0 1">
-            <geom type="capsule" size=".01 .01" material="inpill" group="1" condim="1"/>
+            <geom type="capsule" size=".005 .005" material="inpill" group="1" condim="1"/>
         </body>
 		<body mocap="true" pos="-0.5 0 0" zaxis="0 0 1">
-            <geom type="capsule" size=".01 .01" material="leftpill" group="1" condim="1"/>
+            <geom type="capsule" size=".005 .005" material="leftpill" group="1" condim="1"/>
         </body>
 		<body mocap="true" pos="0.5 0 0" zaxis="0 0 1">
-            <geom type="capsule" size=".01 .01" material="rightpill" group="1" condim="1"/>
+            <geom type="capsule" size=".005 .005" material="rightpill" group="1" condim="1"/>
         </body>
 		<body mocap="true" pos="0 0 -0.5" zaxis="0 0 1">
-            <geom type="capsule" size=".01 .01" material="downpill" group="1" condim="1"/>
+            <geom type="capsule" size=".005 .005" material="downpill" group="1" condim="1"/>
         </body>
 		<body mocap="true" pos="0 0 0.5" zaxis="0 0 1">
-            <geom type="capsule" size=".01 .01" material="uppill" group="1" condim="1"/>
+            <geom type="capsule" size=".005 .005" material="uppill" group="1" condim="1"/>
         </body>
     </worldbody>
 </mujoco>
