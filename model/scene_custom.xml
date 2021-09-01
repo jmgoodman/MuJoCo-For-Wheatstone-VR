@@ -15,7 +15,7 @@
     <visual>
         <rgba haze="0.15 0.25 0.35 1"/>
         <quality shadowsize="2048"/>
-		<global ipd="-0.068"/> <!--change me to adjust interpupillary distance! (default = 0.068) (note: negative ipd presents the right eye to the left and the left to the right - important when mirroring the world for a Wheatstone stereoscope!!!/-->
+		<global ipd="-0.000"/> <!--change me to adjust interpupillary distance! (default = 0.068) (note: negative ipd presents the right eye to the left and the left to the right - important when mirroring the world for a Wheatstone stereoscope!!!/-->
         <map stiffness="700" shadowscale="0.5" fogstart="10" fogend="15" zfar="40" haze="0.3"/>
     </visual>
 

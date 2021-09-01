@@ -807,8 +807,8 @@ int main(int argc, const char** argv)
         mju_error("Could not initialize GLFW");
 
     // create window, make OpenGL context current, request v-sync
-	// int window_width;
-	// int window_height;
+	// int window_width; (1200)
+	// int window_height; (1920)
 	get_resolution();
 	
 	// 3840
@@ -826,8 +826,8 @@ int main(int argc, const char** argv)
     cam.lookat[1] = 0;
     cam.lookat[2] = 0;
     cam.distance  = 0.2; // if this points at the object, then it should be a 15 (height), 20(out), 25 (hyp) triangle of distance
-	cam.azimuth   = 90; // deg
-	cam.elevation = 37; // deg, 37 for a nice 3-4-5 triangle
+	cam.azimuth   = -90; // deg
+	cam.elevation = -37; // deg, 37 for a nice 3-4-5 triangle
 
     // set to fixed camera
     // cam.type = mjCAMERA_FIXED;
