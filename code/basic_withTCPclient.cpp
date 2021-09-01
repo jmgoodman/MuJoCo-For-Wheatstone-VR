@@ -75,6 +75,11 @@ WSADATA wsa;
 SOCKET s;
 struct sockaddr_in server;
 
+//window resolution
+int window_width;
+int window_height;
+
+
 // thread locking (or not, it's probably just a source of bugs tbf)
 // std::mutex mtx;
 
@@ -239,6 +244,12 @@ void mouse_move(GLFWwindow* window, double xpos, double ypos)
     mjv_moveCamera(m, action, dx/height, dy/height, &scn, &cam);
 }
 
+void get_resolution() {
+    const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+    window_width = mode->width;
+    window_height = mode->height;
+}
 
 // scroll callback
 void scroll(GLFWwindow* window, double xoffset, double yoffset)
@@ -796,7 +807,13 @@ int main(int argc, const char** argv)
         mju_error("Could not initialize GLFW");
 
     // create window, make OpenGL context current, request v-sync
-    GLFWwindow* window = glfwCreateWindow(3840, 1200, "Demo", NULL, NULL);
+	// int window_width;
+	// int window_height;
+	get_resolution();
+	
+	// 3840
+	// 1200
+    GLFWwindow* window = glfwCreateWindow(2*window_width, window_height, "Demo", NULL, NULL);
 	glfwSetWindowPos(window,0,0);
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
