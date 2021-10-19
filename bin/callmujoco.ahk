@@ -3,6 +3,7 @@
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 ; https://autohotkey.com/board/topic/71132-rotate-only-one-entire-window/
+; btw it'd be better to just do this as a windows batch script...
 
 #SingleInstance Force
 

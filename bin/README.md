@@ -1,5 +1,5 @@
 # .exe files go here
-you need a valid license for MuJoCo to use this. Paste it in here, you dingus.
+you need a valid license for MuJoCo to use this. I've pasted in the free-for-everyone license file.
 
 # also
 look here for `basic_custom.exe` after you build it
