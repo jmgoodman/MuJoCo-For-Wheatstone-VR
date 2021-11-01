@@ -1,0 +1,3 @@
+https://www.linuxhowtos.org/C_C++/socket.htm
+
+https://programmer.help/blogs/an-example-of-c-socket-programming-under-linux.html
