@@ -1,0 +1,4 @@
+Tue Dec  7 21:14:18 2021
+ERROR: Load model error: Error: could not open STL file '..\model\Handle_1.2.stl'
+Object name = HandleM, id = 0, line = 44, column = 9
+

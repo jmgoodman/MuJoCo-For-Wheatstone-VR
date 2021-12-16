@@ -1,6 +1,6 @@
 <mujoco>
     <compiler coordinate="local" angle="radian"/>
-    <option apirate="50">
+    <option apirate="50" gravity="0 0 0">
         <flag clampctrl="disable" contact="enable" gravity="disable"/>
     </option>
     <include file="mujoco_arm_1.10_Bart.xml"/>
@@ -32,14 +32,14 @@
     
     <visual>
         <scale jointwidth="0.05" jointlength="0.05" contactwidth="0.1" contactheight="0.04" forcewidth="0.01"/>
-		<global ipd="0.3"/> <!--change me to adjust interpupillary distance!/-->
+		<global ipd="0.03"/> <!--change me to adjust interpupillary distance!/-->
         <rgba contactpoint="1 1 0 1"/>
         <map znear="0.05"/>
     	<headlight ambient="0 0 0" diffuse="0.8 0.8 0.8" specular="0 0 0"/>
     </visual>
     
     <asset>
-        <texture type="skybox" builtin="gradient" rgb1="0.9 0.9 0.9" rgb2="0.5 0.5 0.5" 
+        <texture type="skybox" builtin="gradient" rgb1="0 0 0" rgb2="0 0 0" 
                  width="256" height="256"/>
         <mesh name="HandleM" scale="0.001 0.001 0.001" file="Handle_1.2.stl"/>
         <mesh name="HandleNoDiskM" scale="0.001 0.001 0.001" file="HandleNoDisk_1.3.stl"/>

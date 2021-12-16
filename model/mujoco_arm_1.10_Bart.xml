@@ -2,6 +2,9 @@
 D:/Andres/Code/Data/Glove/Bart_Wave_Andres_Right_Arm.mat 26-Apr-2018 09:34:36
 -->
 <mujoco>
+    <option apirate="50" gravity="0 0 0">
+        <flag clampctrl="disable" contact="enable" gravity="disable"/>
+    </option>
     <default>
         <default class="arm">
             <geom rgba="0.7 0.43 0 1" contype="0" conaffinity="0" group="1"/>
