@@ -229,48 +229,6 @@ int main(int argc, const char** argv)
 
         // process pending GUI events, call GLFW callbacks
         glfwPollEvents();
-
-        // set hard coded posture
-        // j30=.157, j32=.314, j29=1.57, j26=1.57, j28=.283
-        id = mj_name2id(m, mjOBJ_ACTUATOR, "a30");
-        if( id>=0 ) {
-            d->ctrl[m->jnt_qposadr[id]] = .157;
-        }
-        else {
-            mju_error("Actuator 'a30' not found");
-        }
-
-        id = mj_name2id(m, mjOBJ_ACTUATOR, "a32");
-        if( id>=0 ) {
-            d->ctrl[m->jnt_qposadr[id]] = .314;
-        }
-        else {
-            mju_error("Actuator 'a32' not found");
-        }
-
-        id = mj_name2id(m, mjOBJ_ACTUATOR, "a29");
-        if( id>=0 ) {
-            d->ctrl[m->jnt_qposadr[id]] = 1.57;
-        }
-        else {
-            mju_error("Actuator 'a29' not found");
-        }
-
-        id = mj_name2id(m, mjOBJ_ACTUATOR, "a26");
-        if( id>=0 ) {
-            d->ctrl[m->jnt_qposadr[id]] = 1.57;
-        }
-        else {
-            mju_error("Actuator 'a26' not found");
-        }
-
-        id = mj_name2id(m, mjOBJ_ACTUATOR, "a28");
-        if( id>=0 ) {
-            d->ctrl[m->jnt_qposadr[id]] = .283;
-        }
-        else {
-            mju_error("Actuator 'a28' not found");
-        }
     }
 
     //free visualization storage

@@ -2,3 +2,8 @@ Tue Dec  7 21:14:18 2021
 ERROR: Load model error: Error: could not open STL file '..\model\Handle_1.2.stl'
 Object name = HandleM, id = 0, line = 44, column = 9
 
+Fri Dec 17 16:29:41 2021
+ERROR: Load model error: XML parse error at line 0, column 0:
+Failed to open file
+
+
