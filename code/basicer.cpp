@@ -175,14 +175,6 @@ int main(int argc, const char** argv)
     // initialize visualization data structures
     mjv_defaultCamera(&cam);
 
-    // set REAL camera defaults
-    cam.lookat[0] = 0;
-    cam.lookat[1] = 0;
-    cam.lookat[2] = 0;
-    cam.distance  = 0.5; // if this points at the object, then it should be a 15 (height), 20(out), 25 (hyp) triangle of distance
-    cam.azimuth   = 0; // deg
-    cam.elevation = -45; // deg, 37 for a nice 3-4-5 triangle
-
     mjv_defaultOption(&opt);
     mjv_defaultScene(&scn);
     mjr_defaultContext(&con);
@@ -211,7 +203,7 @@ int main(int argc, const char** argv)
         //  this loop will finish on time for the next frame to be rendered at 60 fps.
         //  Otherwise add a cpu timer and exit this loop when it is time to render.
         mjtNum simstart = d->time;
-        while( d->time - simstart < 1.0/60.0 )
+        while( d->time - simstart < 1.0/144.0 )
         {
             mj_step(m, d);
         }
