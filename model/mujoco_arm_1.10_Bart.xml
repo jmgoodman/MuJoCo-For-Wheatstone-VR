@@ -7,7 +7,7 @@ D:/Andres/Code/Data/Glove/Bart_Wave_Andres_Right_Arm.mat 26-Apr-2018 09:34:36
     </option>
     <default>
         <default class="arm">
-            <geom rgba="0.7 0.43 0 1" contype="0" conaffinity="0" group="1"/>
+            <geom rgba="0.7 0.49 0.343 0.2401" contype="0" conaffinity="0" group="1"/>
             <!--joint damping="0.2" armature="0.01" range="-3.14 3.14"/-->
             <joint damping="0.9" armature="0.01" range="-3.14 3.14"/>
             <position ctrllimited="true" kp="20" ctrlrange="-3.14 3.14"/>
