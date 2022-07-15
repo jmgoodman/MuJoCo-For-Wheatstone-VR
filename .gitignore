@@ -2,6 +2,7 @@
 .DS_Store
 for_testing/
 testpattern/
+junk/
 bin/*
 !bin/basic_withTCPclient.exe
 !bin/callmujoco.ahk

@@ -1,9 +1,8 @@
-Tue Dec  7 21:14:18 2021
-ERROR: Load model error: Error: could not open STL file '..\model\Handle_1.2.stl'
-Object name = HandleM, id = 0, line = 44, column = 9
+Fri Jul 15 15:56:51 2022
+ERROR: Load model error: Error: PNG file load error 'empty input or file doesn't exist' in texture id = 2
+Object name = texcarpet, id = 2, line = 26, column = 9
 
-Fri Dec 17 16:29:41 2021
-ERROR: Load model error: XML parse error at line 0, column 0:
-Failed to open file
-
+Fri Jul 15 16:13:49 2022
+ERROR: Load model error: Error: material 'matmarble' not found in geom 1
+Object name = , id = 1, line = 36, column = 13
 

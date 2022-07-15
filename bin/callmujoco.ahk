@@ -7,12 +7,13 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 #SingleInstance Force
 
-; open a paint window
-Run, "C:\Program Files (x86)\Northern Digital Inc\WaveFront\WaveFront.exe","C:\Program Files (x86)\Northern Digital Inc\WaveFront\",Hide
-sleep, 20000
+; open the proprietary software that reads from the magnetic tracking system
+; commented out for those without access to it
+; Run, "C:\Program Files (x86)\Northern Digital Inc\WaveFront\WaveFront.exe","C:\Program Files (x86)\Northern Digital Inc\WaveFront\",Hide
+; sleep, 20000
 
-SetWorkingDir, "C:\Users\neuro-setup\Documents\GitHub\MuJoCo-For-Wheatstone-VR\bin\" ; needed to put this script directly in the bin folder to avoid licensing issues.
+SetWorkingDir, %A_ScriptDir% ; needed to put this script directly in the bin folder to avoid licensing issues.
 sleep, 1000
-Run, "C:\Users\neuro-setup\Documents\GitHub\MuJoCo-For-Wheatstone-VR\bin\basic_withTCPclient.exe" "..\model\scene_custom.xml","C:\Users\neuro-setup\Documents\GitHub\MuJoCo-For-Wheatstone-VR\bin"
+Run, %A_ScriptDir%\basic_withTCPclient.exe "..\model\scene_custom.xml","C:\Users\neuro-setup\Documents\GitHub\MuJoCo-For-Wheatstone-VR\bin"
 
 return

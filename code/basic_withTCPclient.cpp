@@ -57,9 +57,9 @@ mjrContext con;                     // custom GPU context
 mjvPerturb pert;
 
 mjtNum CUMPERT [3] = {0,0,0};
-const mjtNum VERTPERT [3] = {0,0.167,0};
-const mjtNum HORZPERT [3] = {0.167,0,0};
-const mjtNum OUTPERT  [3] = {0,0,0.167}; 
+const mjtNum VERTPERT [3] = {0,0.001,0};
+const mjtNum HORZPERT [3] = {0.001,0,0};
+const mjtNum OUTPERT  [3] = {0,0,0.001}; 
 const mjtNum ZEROPERT [3] = {0,0,0};
 mjtNum ZEROLOC [3] = {0,0,0};
 
@@ -140,9 +140,9 @@ void keyboard(GLFWwindow* window, int key, int scancode, int act, int mods)
     {
 		mju_add3(CUMPERT,CUMPERT,VERTPERT);
 		mju_copy3(pert.refpos,CUMPERT);
-		/*
-		cout << "up" << endl;
-		*/
+		
+		// std::cout << "up" << std::endl;
+		
     }
 	
 	if( act==GLFW_PRESS && key==GLFW_KEY_RIGHT )
@@ -300,7 +300,7 @@ int tcpinit(void)
 int sendcommand(const char *thismsg)
 {	
 	// ----------------------------
-	int msglen = strlen(thismsg); // do NOT include nullterm, it causes problems when subsequently trying to read out the dataframes. namely, if the server receives a null terminated command, it simply does not send the dataframes (or it does, BUT its "OK" confirmation message includes the null terminating character which in turn completely fucks with the parsing of the confirmation method and, in turn, the subsequent dataframe)
+	int msglen = strlen(thismsg); // do NOT include nullterm, it causes problems when subsequently trying to read out the dataframes. namely, if the server receives a null terminated command, it simply does not send the dataframes (or it does, BUT its "OK" confirmation message includes the null terminating character which in turn completely messes with the parsing of the confirmation method and, in turn, the subsequent dataframe)
 	char lenbytes[4];
 	char typebytes[4];
 	int b = 0;
@@ -659,7 +659,7 @@ int readdataframe(void)
 				std::cout << -Y << " " << X << " " << -Z << " " << Q0 << " " << Qx << " " << Qy << " " << Qz << " " << std::endl;
 				*/
 				
-				// this all works with the wand, btw. when it comes to the hand with all 8 markers, it chugs like you wouldn't believe, and eventually, WaveFront fucking crashes. Need to solve this problem! (probably by splitting wavefront and mujoco onto different machines...) (ähm, okay, when I tried it again, it didn't cause problems anymore...)
+				// this all works with the wand, btw. when it comes to the hand with all 8 markers, it chugs like you wouldn't believe, and eventually, WaveFront crashes. Need to solve this problem! (probably by splitting wavefront and mujoco onto different machines...) (ähm, okay, when I tried it again, it didn't cause problems anymore...)
 				mjtNum scalefactor = 0.001; // convert mm (Wave) to m (MuJoCo)
 				
 				mju_scl3(pert.refpos,pospert,scalefactor); // was copy3, but i realized that I need to convert from mm to m.
@@ -738,7 +738,7 @@ int clientfun(GLFWwindow* window)
 		// std::this_thread::sleep_for(std::chrono::milliseconds(SAMPLEPERIOD));
 		
 		// this is probably mega inefficient. simply call "streamframes" once.
-		// uh oh, problem: "StreamFrames AllFrames" doesn't result in movement! oh no! I have to assume the problem is that the format is juuuuust slightly different, which in turn fucks up my parsing. UGHHHHH
+		// uh oh, problem: "StreamFrames AllFrames" doesn't result in movement! oh no! I have to assume the problem is that the format is juuuuust slightly different, which in turn messes up my parsing. UGHHHHH
 		
 		if(sendcommand("SendCurrentFrame")==1)
 		{
@@ -872,15 +872,13 @@ int main(int argc, const char** argv)
         mjrRect viewport = {0, 0, 0, 0};
         glfwGetFramebufferSize(window, &viewport.width, &viewport.height);
 		
-		// do this within the data reading loop 
-		/*
+		// do this within the data reading loop instead (unless you've disabled the motion tracking system for demonstration / debugging purposes, as you have done for this repo)
 		// apply perturbations, then update model
 		// reset perturbation state
 		pert.active = 1; // 1=translation, 2=rotation
 		pert.select = 1;
 		pert.skinselect = -1;
 		mjv_applyPerturbPose(m, d, &pert, 0);  // move mocap bodies only
-		*/
 
         // update scene and render
         mjv_updateScene(m, d, &opt, &pert, &cam, mjCAT_ALL, &scn);
