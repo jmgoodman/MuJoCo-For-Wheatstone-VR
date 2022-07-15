@@ -1,2 +1,24 @@
 
 .DS_Store
+for_testing/
+testpattern/
+bin/*
+!bin/basic_withTCPclient.exe
+!bin/callmujoco.ahk
+!bin/mjkey.txt
+!bin/LICENSE.txt
+!bin/README.md
+!bin/mujoco200.lib
+!bin/mujoco200.dll
+!bin/mujoco200nogl.lib
+!bin/mujoco200nogl.dll
+!bin/glfw3.lib
+!bin/glfw3static.lib
+!bin/glfw3.dll
+code/*
+!code/basic_withTCPclient.cpp
+!code/makefile_withTCPclient
+!code/README.md
+model/*
+!model/scene_custom.xml
+!model/README.md
